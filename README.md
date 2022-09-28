@@ -13,6 +13,7 @@ Features implemented using mvvm:
 1. Add contact functionality but first we should use fragments to create new form to add contact
 2. add pagination
 3. use of Flow
+4. Add unit test classes
 
 ## Screen shots
 ![screenshot1](https://github.com/ahsanbhatti49/contact-list-sample/blob/main/screenshot_1.jpg?raw=true "screenshot1")
