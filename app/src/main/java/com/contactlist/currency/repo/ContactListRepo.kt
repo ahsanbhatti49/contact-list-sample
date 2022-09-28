@@ -1,49 +1,48 @@
 package com.contactlist.currency.repo
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import com.contactlist.currency.app.AppExecutors
-import com.contactlist.currency.data.api.ApiServices
-import com.contactlist.currency.data.api.network.NetworkAndDBBoundResource
-import com.contactlist.currency.data.api.network.Resource
+import android.content.SharedPreferences
+import android.content.res.AssetManager
+import android.util.Log
 import com.contactlist.currency.data.local.dao.ContactListDao
-import com.contactlist.currency.data.model.ContactModel
+import com.contactlist.currency.data.local.entity.ContactEntity
+import com.contactlist.currency.utils.XmlParser
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.InputStream
 import javax.inject.Inject
 
 class ContactListRepo @Inject constructor(
     private val contactListDao: ContactListDao,
-    private val apiServices: ApiServices,
     @ApplicationContext val context: Context,
-    private val appExecutors: AppExecutors = AppExecutors()
+    private val assets: AssetManager,
+    private val sharedPreferences: SharedPreferences
 ) {
-    fun getContactList(firstCall: Boolean): LiveData<Resource<ContactModel?>> {
-        val data = HashMap<String, String>()
-        data["app_id"] = "BuildConfig.API_KEY"
-
-        return object :
-            NetworkAndDBBoundResource<ContactModel, ContactModel>(appExecutors) {
-            override fun saveCallResult(item: ContactModel) {
-                contactListDao.insertCurrencyRates(item)
-            }
-
-            override fun shouldFetch(data: ContactModel?): Boolean {
-                return  (firstCall || checkIfFirstCall())
-            }
-
-            override fun loadFromDb(): LiveData<ContactModel> {
-                return contactListDao.getLocalCurrencyData()
-            }
-
-            override fun createCall(): LiveData<Resource<ContactModel>> =
-                apiServices.getNewsSource(data)
-
-        }.asLiveData()
-
+    suspend fun getContactList(): List<ContactEntity> {
+        val firstTime = sharedPreferences.getBoolean("firstTime", true)
+        if (firstTime)
+            fetchDataFromParser()
+        return contactListDao.getContactList()
     }
 
-    fun checkIfFirstCall(): Boolean {
-        return contactListDao.getLocalCurrencyData().value == null
+    private suspend fun fetchDataFromParser() {
+        withContext(Dispatchers.IO) {
+            val assetManager: AssetManager = assets
+            val xmlStream: InputStream = assetManager.open("ab.xml")
+            try {
+                val list: List<ContactEntity> = XmlParser.parse(xmlStream)
+                contactListDao.insertContactList(list.distinctBy { it.customerId })
+                sharedPreferences.edit().putBoolean("firstTime", false).apply()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
+    suspend fun deleteContact(contactEntity: ContactEntity) {
+        withContext(Dispatchers.IO) {
+            contactListDao.deleteContact(contactEntity)
+        }
+    }
 }

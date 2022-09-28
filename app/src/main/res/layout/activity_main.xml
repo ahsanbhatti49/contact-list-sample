@@ -14,70 +14,25 @@
         android:layout_height="match_parent"
         tools:context=".ui.MainActivity">
 
-        <LinearLayout
-            android:id="@+id/llAmount"
-            android:layout_width="match_parent"
+        <include
+            android:id="@+id/search_layout"
+            layout="@layout/item_search_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="42dp"
-            android:layout_marginEnd="42dp"
-            android:layout_marginBottom="8dp"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.vicmikhailau.maskededittext.MaskedEditText
-                android:id="@+id/etAmount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="0.5"
-                android:digits="0123456789"
-                android:gravity="center"
-                android:hint="@string/enter_amount"
-                android:inputType="number"
-                android:maxLines="1"
-                android:padding="14dp"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                app:mask="#,###,###,###.##" />
-
-            <Button
-                android:id="@+id/btnConvert"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:text="@string/convert" />
-
-        </LinearLayout>
-
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/llAmount"
-            android:layout_marginStart="42dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="42dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/llAmount" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.contactlist.currency.utils.CompleteRecyclerView
-            android:id="@+id/currencyList"
+            android:id="@+id/contactList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="80dp"
             android:layout_marginEnd="8dp"
             android:clipToPadding="false"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner"
-            tools:listitem="@layout/item_currencies" />
+            app:layout_constraintTop_toBottomOf="@+id/search_layout"
+            tools:listitem="@layout/item_contact" />
 
         <!-- Progress and empty views -->
         <include

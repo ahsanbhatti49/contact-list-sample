@@ -1,21 +1,18 @@
 package com.contactlist.currency.data.local.dao
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.contactlist.currency.data.model.ContactModel
+import androidx.room.*
+import com.contactlist.currency.data.local.entity.ContactEntity
 
 
 @Dao
 interface ContactListDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCurrencyRates(contact: ContactModel)
+    abstract suspend fun insertContactList(contact: List<ContactEntity>)
 
-    @Query("SELECT * FROM rates")
-    fun getLocalCurrencyData(): LiveData<ContactModel>
+    @Query("SELECT * FROM contact")
+    abstract suspend fun getContactList(): List<ContactEntity>
 
-
+    @Delete
+    abstract suspend fun deleteContact(contactEntity: ContactEntity)
 }

@@ -2,9 +2,9 @@ package com.contactlist.currency.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.AssetManager
 import androidx.room.Room
-import com.contactlist.currency.data.api.ApiServices
-import com.contactlist.currency.data.api.network.LiveDataCallAdapterFactoryForRetrofit
 import com.contactlist.currency.data.local.AppDatabase
 import com.contactlist.currency.data.local.dao.ContactListDao
 import dagger.Module
@@ -12,8 +12,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 
@@ -28,13 +26,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideNewsService(): ApiServices {
-        return Retrofit.Builder()
-            .baseUrl("https://openexchangerates.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(LiveDataCallAdapterFactoryForRetrofit())
-            .build()
-            .create(ApiServices::class.java)
+    internal fun provideAssetManager(context: Context): AssetManager {
+        return context.assets
     }
 
     @Singleton
@@ -45,7 +38,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideUserDao(db: AppDatabase): ContactListDao = db.contactListDao()
-
+    fun provideContactDao(db: AppDatabase): ContactListDao = db.contactListDao()
+    /**
+     * Provides Preferences object with MODE_PRIVATE
+     */
+    @Singleton
+    @Provides
+    fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
 
 }

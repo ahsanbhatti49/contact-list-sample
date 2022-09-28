@@ -3,7 +3,7 @@ package com.contactlist.currency.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "rates")
+@Entity(tableName = "contact")
 data class ContactEntity(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
     val customerId: String,

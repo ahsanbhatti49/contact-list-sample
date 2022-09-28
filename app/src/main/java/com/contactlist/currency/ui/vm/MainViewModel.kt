@@ -1,39 +1,60 @@
 package com.contactlist.currency.ui.vm
 
-import android.content.res.AssetManager
-import android.util.Log
-import android.util.Xml
 import android.view.View
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.contactlist.currency.data.api.network.Status
+import com.contactlist.currency.data.local.entity.ContactEntity
 import com.contactlist.currency.repo.ContactListRepo
-import com.contactlist.currency.utils.XmlParser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.xmlpull.v1.XmlPullParser
-import java.io.InputStream
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repo: ContactListRepo
+    private val repo: ContactListRepo,
 ) : ViewModel() {
-    @BindingAdapter("onClick")
-    fun onClick(view: View, onClick: () -> Unit) {
-        view.setOnClickListener {
-            onClick()
-        }
+
+    private val _contactList: MutableLiveData<List<ContactEntity>> = MutableLiveData()
+    val contactList: MutableLiveData<List<ContactEntity>> = MutableLiveData()
+    var _uiState: MutableLiveData<Status> = MutableLiveData()
+
+    init {
+        _uiState.value = Status.IDLE
+        getContactList()
     }
 
-    fun startParsing(assets: AssetManager) {
-        val assetManager: AssetManager = assets
-        val xmlStream: InputStream = assetManager.open("ab.xml")
-        try {
-            val list = XmlParser.parse(xmlStream)
-            Log.d("done", list.toString())
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun getContactList(): LiveData<List<ContactEntity>> {
+        _uiState.value = Status.LOADING
+        viewModelScope.launch {
+            try {
+                val result = repo.getContactList().distinctBy { it.customerId }
+                _contactList.value = result
+                contactList.value = _contactList.value
+                _uiState.value = Status.SUCCESS
+            } catch (e: Exception) {
+                _uiState.value = Status.ERROR
+            }
         }
+        return contactList
     }
 
+    fun deleteContact(contactEntity: ContactEntity) {
+        viewModelScope.launch {
+            repo.deleteContact(contactEntity)
+            getContactList()
+        }
+    }
+}
+
+@BindingAdapter("onClick")
+fun onClick(view: View, onClick: () -> Unit) {
+    view.setOnClickListener {
+        onClick()
+    }
 }

@@ -19,7 +19,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
-
+    kapt {
+        correctErrorTypes true
+    }
     buildFeatures {
         viewBinding true
     }
@@ -84,14 +86,6 @@ dependencies {
     androidTestImplementation "com.google.dagger:hilt-android-testing:$dagger_hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_hilt_version"
-    // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
-    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
-
-    //masked edittext
-    implementation("io.github.vicmikhailau:MaskedEditText:4.0.7")
 
     //app start up
     implementation("androidx.startup:startup-runtime:1.1.1")
@@ -103,15 +97,17 @@ dependencies {
     implementation("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
 
-    implementation "androidx.work:work-runtime:2.6.0"
-    implementation "androidx.work:work-runtime-ktx:2.6.0"
-
     //mockito
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:3.10.0'
     testImplementation 'org.mockito:mockito-inline:3.6.28'
     androidTestImplementation 'org.mockito:mockito-android:3.10.0'
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
 
 
 }

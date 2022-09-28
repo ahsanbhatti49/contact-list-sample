@@ -4,5 +4,9 @@
     <string name="empty_title">Empty data</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="convert">Convert</string>
+    <string name="delete_contact">Delete this</string>
+    <string name="edit_name">Edit Name</string>
+    <string name="search_contact">Search Contact</string>
+    <string name="share_contact">Share contact</string>
 
 </resources>
